@@ -6,59 +6,59 @@
 <title>Vijes: donde cada visita cuenta</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 20px; }
-.card { background: #fff; border-radius: 20px; max-width: 480px; width: 100%; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); margin: auto; }
-.header { background: #1D9E75; padding: 24px 24px 18px; text-align: center; }
-.header-icon { font-size: 38px; margin-bottom: 6px; }
-.header h1 { color: #E1F5EE; font-size: 19px; font-weight: 600; margin-bottom: 3px; }
-.header p { color: #9FE1CB; font-size: 12px; }
-.header-logos { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 10px; }
-.header-logos img { height: 48px; width: auto; border-radius: 6px; object-fit: contain; background: #fff; padding: 3px; }
-.progress-wrap { background: #0F6E56; height: 6px; position: relative; }
-.progress-fill { height: 6px; background: #9FE1CB; transition: width 0.4s ease; }
-.progress-label { text-align: right; font-size: 11px; color: #666; padding: 4px 16px 0; }
-.body { padding: 20px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f0; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 0; }
+.card { background: #fff; border-radius: 0; max-width: 640px; width: 100%; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.10); margin: auto; min-height: 100vh; }
+.header { background: #1D9E75; padding: 28px 28px 20px; text-align: center; }
+.header-icon { font-size: 44px; margin-bottom: 8px; }
+.header h1 { color: #E1F5EE; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.header p { color: #9FE1CB; font-size: 15px; }
+.header-logos { display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 12px; }
+.header-logos img { height: 56px; width: auto; border-radius: 6px; object-fit: contain; background: #fff; padding: 3px; }
+.progress-wrap { background: #0F6E56; height: 8px; position: relative; }
+.progress-fill { height: 8px; background: #9FE1CB; transition: width 0.4s ease; }
+.progress-label { text-align: right; font-size: 13px; color: #666; padding: 6px 20px 0; }
+.body { padding: 24px 20px; }
 .step { display: none; }
 .step.active { display: block; }
-.step-icon { font-size: 36px; text-align: center; margin-bottom: 8px; }
-.step-q { font-size: 16px; font-weight: 600; color: #111; margin-bottom: 3px; }
-.step-sub { font-size: 12px; color: #666; margin-bottom: 14px; }
-.opts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
-.opt { border: 1.5px solid #ddd; border-radius: 20px; padding: 8px 14px; font-size: 13px; cursor: pointer; background: #fff; color: #222; transition: all 0.15s; user-select: none; }
+.step-icon { font-size: 42px; text-align: center; margin-bottom: 10px; }
+.step-q { font-size: 20px; font-weight: 600; color: #111; margin-bottom: 4px; }
+.step-sub { font-size: 15px; color: #666; margin-bottom: 16px; }
+.opts { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.opt { border: 1.5px solid #ddd; border-radius: 24px; padding: 12px 18px; font-size: 16px; cursor: pointer; background: #fff; color: #222; transition: all 0.15s; user-select: none; }
 .opt:hover { background: #E1F5EE; border-color: #1D9E75; color: #085041; }
 .opt.sel { background: #1D9E75; border-color: #1D9E75; color: #fff; }
-.opt.big { font-size: 26px; padding: 9px 13px; border-radius: 10px; }
-.emoji-legend { display: flex; gap: 10px; font-size: 11px; color: #777; margin-top: -8px; margin-bottom: 14px; flex-wrap: wrap; }
-.inp { width: 100%; border: 1.5px solid #ddd; border-radius: 10px; padding: 10px 12px; font-size: 14px; color: #222; font-family: inherit; outline: none; margin-bottom: 14px; }
+.opt.big { font-size: 32px; padding: 12px 16px; border-radius: 12px; }
+.emoji-legend { display: flex; gap: 12px; font-size: 14px; color: #777; margin-top: -8px; margin-bottom: 16px; flex-wrap: wrap; }
+.inp { width: 100%; border: 1.5px solid #ddd; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #222; font-family: inherit; outline: none; margin-bottom: 16px; }
 .inp:focus { border-color: #1D9E75; }
-.inp-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.inp-row { display: flex; gap: 10px; margin-bottom: 16px; }
 .inp-row .inp { margin-bottom: 0; }
-.stars { display: flex; gap: 6px; margin-bottom: 4px; }
-.star { font-size: 30px; cursor: pointer; color: #ddd; transition: color 0.1s; line-height: 1; }
+.stars { display: flex; gap: 8px; margin-bottom: 6px; }
+.star { font-size: 38px; cursor: pointer; color: #ddd; transition: color 0.1s; line-height: 1; }
 .star.lit { color: #BA7517; }
-.rating-block { margin-bottom: 14px; }
-.rating-lbl { font-size: 13px; color: #555; margin-bottom: 4px; }
-.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-.btn { border: 1.5px solid #ccc; border-radius: 10px; padding: 9px 20px; font-size: 13px; cursor: pointer; background: #fff; color: #333; font-weight: 500; }
+.rating-block { margin-bottom: 18px; }
+.rating-lbl { font-size: 16px; color: #555; margin-bottom: 6px; }
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+.btn { border: 1.5px solid #ccc; border-radius: 12px; padding: 14px 28px; font-size: 16px; cursor: pointer; background: #fff; color: #333; font-weight: 500; }
 .btn.next { background: #1D9E75; border-color: #1D9E75; color: #fff; }
 .btn:hover { opacity: 0.85; }
-.counter { font-size: 11px; color: #aaa; }
-textarea { width: 100%; border: 1.5px solid #ddd; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #222; font-family: inherit; resize: vertical; outline: none; margin-bottom: 14px; }
+.counter { font-size: 13px; color: #aaa; }
+textarea { width: 100%; border: 1.5px solid #ddd; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #222; font-family: inherit; resize: vertical; outline: none; margin-bottom: 16px; }
 textarea:focus { border-color: #1D9E75; }
-.fin { text-align: center; padding: 10px 0 20px; }
-.fin-icon { font-size: 56px; margin-bottom: 12px; }
-.fin h2 { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 6px; }
-.fin p { font-size: 13px; color: #555; margin-bottom: 16px; line-height: 1.7; }
-.resumen { background: #E1F5EE; border-radius: 10px; padding: 14px; text-align: left; margin-bottom: 14px; }
-.resumen-title { font-size: 12px; font-weight: 600; color: #085041; margin-bottom: 6px; }
-.resumen-row div { font-size: 12px; color: #0F6E56; line-height: 1.9; }
-.footer-note { font-size: 10px; color: #bbb; margin-top: 8px; }
-.gasto-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.gasto-lbl { font-size: 13px; color: #555; flex: 1; }
-.gasto-inp { width: 120px; border: 1.5px solid #ddd; border-radius: 8px; padding: 7px 10px; font-size: 13px; color: #222; outline: none; text-align: right; }
+.fin { text-align: center; padding: 16px 0 28px; }
+.fin-icon { font-size: 64px; margin-bottom: 14px; }
+.fin h2 { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 8px; }
+.fin p { font-size: 16px; color: #555; margin-bottom: 20px; line-height: 1.7; }
+.resumen { background: #E1F5EE; border-radius: 12px; padding: 16px; text-align: left; margin-bottom: 16px; }
+.resumen-title { font-size: 14px; font-weight: 600; color: #085041; margin-bottom: 8px; }
+.resumen-row div { font-size: 14px; color: #0F6E56; line-height: 2; }
+.footer-note { font-size: 12px; color: #bbb; margin-top: 10px; }
+.gasto-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.gasto-lbl { font-size: 16px; color: #555; flex: 1; }
+.gasto-inp { width: 130px; border: 1.5px solid #ddd; border-radius: 10px; padding: 10px 12px; font-size: 16px; color: #222; outline: none; text-align: right; }
 .gasto-inp:focus { border-color: #1D9E75; }
 select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-.section-divider { border: none; border-top: 1.5px solid #eee; margin: 14px 0; }
+.section-divider { border: none; border-top: 1.5px solid #eee; margin: 16px 0; }
 </style>
 </head>
 <body>
