@@ -160,29 +160,33 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
         <input class="inp" id="otro_pais_nombre" type="text" placeholder="¿Cuál país?" />
       </div>
       <div id="depto-block">
-        <select class="inp" id="depto_origen">
-          <option value="">— Selecciona tu departamento —</option>
-          <option>Valle del Cauca</option>
-          <option>Antioquia</option>
-          <option>Bogotá D.C.</option>
-          <option>Cundinamarca</option>
-          <option>Atlántico</option>
-          <option>Bolívar</option>
-          <option>Santander</option>
-          <option>Nariño</option>
-          <option>Cauca</option>
-          <option>Risaralda</option>
-          <option>Quindío</option>
-          <option>Caldas</option>
-          <option>Huila</option>
-          <option>Tolima</option>
-          <option>Córdoba</option>
-          <option>Magdalena</option>
-          <option>Boyacá</option>
-          <option>Meta</option>
-          <option>Chocó</option>
-          <option>Otro departamento</option>
+        <select class="inp" id="depto_origen" onchange="toggleCiudadOtra()">
+          <option value="">— Selecciona tu ciudad —</option>
+          <option>Cali</option>
+          <option>Bogotá</option>
+          <option>Medellín</option>
+          <option>Barranquilla</option>
+          <option>Cartagena</option>
+          <option>Bucaramanga</option>
+          <option>Pereira</option>
+          <option>Manizales</option>
+          <option>Armenia</option>
+          <option>Ibagué</option>
+          <option>Pasto</option>
+          <option>Cúcuta</option>
+          <option>Villavicencio</option>
+          <option>Neiva</option>
+          <option>Popayán</option>
+          <option>Palmira</option>
+          <option>Buenaventura</option>
+          <option>Tuluá</option>
+          <option>Buga</option>
+          <option>Cartago</option>
+          <option>Otra ciudad</option>
         </select>
+        <div id="ciudad-otra-block" style="display:none;">
+          <input class="inp" id="ciudad_otra" type="text" placeholder="¿Cuál ciudad?" />
+        </div>
       </div>
       <div class="nav"><button class="btn" onclick="go(3)">← Atrás</button><button class="btn next" onclick="go(5)">Siguiente →</button></div>
     </div>
@@ -298,6 +302,7 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
       <div class="step-icon">💰</div>
       <div class="step-q">¿Cuánto gastaste? (en pesos COP)</div>
       
+      <div class="gasto-row"><span class="gasto-lbl">🚗 Transporte</span><input class="gasto-inp inp" id="g_transporte" type="text" inputmode="numeric" placeholder="0" oninput="formatMiles(this)" /></div>
       <div class="gasto-row"><span class="gasto-lbl">🍽️ Alimentos y bebidas</span><input class="gasto-inp inp" id="g_alimento" type="text" inputmode="numeric" placeholder="0" oninput="formatMiles(this)" /></div>
       <div class="gasto-row"><span class="gasto-lbl">🎭 Actividades recreativas</span><input class="gasto-inp inp" id="g_recreacion" type="text" inputmode="numeric" placeholder="0" oninput="formatMiles(this)" /></div>
       <div class="gasto-row"><span class="gasto-lbl">🧶 Bienes de consumo (ej. artesanías)</span><input class="gasto-inp inp" id="g_bienes" type="text" inputmode="numeric" placeholder="0" oninput="formatMiles(this)" /></div>
@@ -514,11 +519,17 @@ function toggleDepto() {
   if (otroPaisBlock) otroPaisBlock.style.display = (pais === 'Otro')     ? 'block' : 'none';
 }
 
+function toggleCiudadOtra() {
+  var ciudad = document.getElementById('depto_origen').value;
+  var otraBlock = document.getElementById('ciudad-otra-block');
+  if (otraBlock) otraBlock.style.display = (ciudad === 'Otra ciudad') ? 'block' : 'none';
+}
+
 /* ── Guardar campos de texto ── */
 function guardarCamposLibres() {
   ['edad','empresa_nombre','otros_enterado','otro_pais_nombre','lugar_otro',
-   'genero_otro','etnico_otro','motivo_otro','transp_otro','adqui_otro',
-   'g_alimento','g_recreacion','g_bienes','g_salud','g_hospedaje','comentario'
+   'genero_otro','etnico_otro','motivo_otro','transp_otro','adqui_otro','ciudad_otra',
+   'g_transporte','g_alimento','g_recreacion','g_bienes','g_salud','g_hospedaje','comentario'
   ].forEach(function(id) {
     var el = document.getElementById(id);
     if (el && el.value && el.value.trim()) data[id] = el.value.trim();
@@ -592,7 +603,8 @@ function go(n) {
       var paisVal = document.getElementById('pais_origen').value;
       if (!paisVal) { mostrarAviso(aviso); return; }
       if (paisVal === 'Otro' && campoOtroVacio('otro_pais_nombre')) { mostrarAviso('Escribe el nombre del país.'); return; }
-      if (paisVal === 'Colombia' && !document.getElementById('depto_origen').value) { mostrarAviso('Selecciona tu departamento.'); return; }
+      if (paisVal === 'Colombia' && !document.getElementById('depto_origen').value.trim()) { mostrarAviso('Escribe tu ciudad de origen.'); return; }
+      if (paisVal === 'Colombia' && document.getElementById('depto_origen').value === 'Otra ciudad' && !document.getElementById('ciudad_otra').value.trim()) { mostrarAviso('Escribe el nombre de tu ciudad.'); return; }
     }
     if (paso === 5) {
       if (!data['enterado']) { mostrarAviso(aviso); return; }
