@@ -139,11 +139,12 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
       <div class="nav"><button class="btn" onclick="go(2)">← Atrás</button><button class="btn next" onclick="go(4)">Siguiente →</button></div>
     </div>
 
-    <!-- PASO 4: Procedencia (C7: dos campos, país + departamento condicional) -->
+    <!-- PASO 4: Procedencia -->
     <div class="step" id="s4">
       <div class="step-icon">🌍</div>
       <div class="step-q">¿De dónde vienes?</div>
-      <select class="inp" id="pais_origen" onchange="toggleDepto()">
+
+      <select class="inp" id="pais_origen" onchange="onCambiaPais()">
         <option value="">— Selecciona tu país —</option>
         <option value="Colombia">🇨🇴 Colombia</option>
         <option value="Venezuela">Venezuela</option>
@@ -156,38 +157,24 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
         <option value="España">España</option>
         <option value="Otro">Otro país</option>
       </select>
+
+      <!-- Si elige "Otro país" -->
       <div id="otro-pais-block" style="display:none;">
         <input class="inp" id="otro_pais_nombre" type="text" placeholder="¿Cuál país?" />
       </div>
-      <div id="depto-block">
-        <select class="inp" id="depto_origen" onchange="toggleCiudadOtra()">
-          <option value="">— Selecciona tu ciudad —</option>
-          <option>Cali</option>
-          <option>Bogotá</option>
-          <option>Medellín</option>
-          <option>Barranquilla</option>
-          <option>Cartagena</option>
-          <option>Bucaramanga</option>
-          <option>Pereira</option>
-          <option>Manizales</option>
-          <option>Armenia</option>
-          <option>Ibagué</option>
-          <option>Pasto</option>
-          <option>Cúcuta</option>
-          <option>Villavicencio</option>
-          <option>Neiva</option>
-          <option>Popayán</option>
-          <option>Palmira</option>
-          <option>Buenaventura</option>
-          <option>Tuluá</option>
-          <option>Buga</option>
-          <option>Cartago</option>
-          <option>Otra ciudad</option>
-        </select>
-        <div id="ciudad-otra-block" style="display:none;">
-          <input class="inp" id="ciudad_otra" type="text" placeholder="¿Cuál ciudad?" />
+
+      <!-- Ciudad (siempre visible tras elegir país) -->
+      <div id="ciudad-block" style="display:none;">
+        <input class="inp" id="ciudad_origen" type="text"
+               placeholder="Ciudad de origen (ej: Cali, Bogotá...)"
+               oninput="autoDetectarRegion()" />
+        <!-- Departamento/estado detectado automáticamente -->
+        <div id="region-detectada" style="display:none;
+             background:#E1F5EE;border-radius:8px;padding:8px 12px;
+             font-size:14px;color:#085041;margin-top:-8px;margin-bottom:12px;">
         </div>
       </div>
+
       <div class="nav"><button class="btn" onclick="go(3)">← Atrás</button><button class="btn next" onclick="go(5)">Siguiente →</button></div>
     </div>
 
@@ -510,34 +497,126 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }); /* fin DOMContentLoaded */
 
-/* ── País → departamento / otro país ── */
-function toggleDepto() {
+/* ── Mapa ciudad → departamento/estado ── */
+var REGION_MAP = {
+  /* Colombia */
+  'cali':'Valle del Cauca','palmira':'Valle del Cauca','buenaventura':'Valle del Cauca',
+  'tulua':'Valle del Cauca','tuluá':'Valle del Cauca','buga':'Valle del Cauca',
+  'cartago':'Valle del Cauca','yumbo':'Valle del Cauca','jamundi':'Valle del Cauca',
+  'jamundí':'Valle del Cauca','vijes':'Valle del Cauca','florida':'Valle del Cauca',
+  'pradera':'Valle del Cauca','candelaria':'Valle del Cauca','zarzal':'Valle del Cauca',
+  'bogota':'Cundinamarca','bogotá':'Cundinamarca','soacha':'Cundinamarca',
+  'zipaquira':'Cundinamarca','zipaquirá':'Cundinamarca','facatativa':'Cundinamarca',
+  'facatativá':'Cundinamarca','fusagasuga':'Cundinamarca','fusagasugá':'Cundinamarca',
+  'medellin':'Antioquia','medellín':'Antioquia','bello':'Antioquia','itagui':'Antioquia',
+  'itagüí':'Antioquia','envigado':'Antioquia','rionegro':'Antioquia','turbo':'Antioquia',
+  'apartado':'Antioquia','apartadó':'Antioquia',
+  'barranquilla':'Atlántico','soledad':'Atlántico','malambo':'Atlántico',
+  'cartagena':'Bolívar','magangue':'Bolívar','magangué':'Bolívar',
+  'bucaramanga':'Santander','floridablanca':'Santander','giron':'Santander',
+  'girón':'Santander','piedecuesta':'Santander',
+  'cucuta':'Norte de Santander','cúcuta':'Norte de Santander','ocana':'Norte de Santander',
+  'pereira':'Risaralda','dosquebradas':'Risaralda',
+  'manizales':'Caldas','la dorada':'Caldas',
+  'armenia':'Quindío','calarca':'Quindío','calarcá':'Quindío',
+  'ibague':'Tolima','ibagué':'Tolima','espinal':'Tolima','melgar':'Tolima',
+  'neiva':'Huila','pitalito':'Huila','garzon':'Huila','garzón':'Huila',
+  'pasto':'Nariño','tumaco':'Nariño','ipiales':'Nariño',
+  'popayan':'Cauca','popayán':'Cauca',
+  'valledupar':'Cesar','santa marta':'Magdalena','riohacha':'La Guajira',
+  'monteria':'Córdoba','montería':'Córdoba',
+  'villavicencio':'Meta','acacias':'Meta','acacías':'Meta',
+  'tunja':'Boyacá','duitama':'Boyacá','sogamoso':'Boyacá',
+  'florencia':'Caquetá','yopal':'Casanare','quibdo':'Chocó','quibdó':'Chocó',
+  'sincelejo':'Sucre','leticia':'Amazonas','inirida':'Guainía','inírida':'Guainía',
+  'mitu':'Vaupés','mitú':'Vaupés','san andres':'San Andrés y Providencia',
+  'san andrés':'San Andrés y Providencia',
+  /* Venezuela */
+  'caracas':'Distrito Capital','maracaibo':'Zulia','valencia':'Carabobo',
+  'barquisimeto':'Lara','maracay':'Aragua','ciudad guayana':'Bolívar',
+  'barcelona':'Anzoátegui','maturin':'Monagas','maturín':'Monagas',
+  'san cristobal':'Táchira','san cristóbal':'Táchira',
+  /* Ecuador */
+  'quito':'Pichincha','guayaquil':'Guayas','cuenca':'Azuay',
+  'ambato':'Tungurahua','machala':'El Oro','esmeraldas':'Esmeraldas',
+  /* Perú */
+  'lima':'Lima','arequipa':'Arequipa','trujillo':'La Libertad',
+  'chiclayo':'Lambayeque','cusco':'Cusco','cuzco':'Cusco',
+  /* México */
+  'ciudad de mexico':'Ciudad de México','cdmx':'Ciudad de México',
+  'guadalajara':'Jalisco','monterrey':'Nuevo León','puebla':'Puebla',
+  'cancun':'Quintana Roo','cancún':'Quintana Roo',
+  /* Argentina */
+  'buenos aires':'Buenos Aires','cordoba':'Córdoba','rosario':'Santa Fe',
+  'mendoza':'Mendoza','tucuman':'Tucumán','tucumán':'Tucumán',
+  /* Brasil */
+  'sao paulo':'São Paulo','são paulo':'São Paulo','rio de janeiro':'Rio de Janeiro',
+  'brasilia':'Distrito Federal','brasília':'Distrito Federal','salvador':'Bahía',
+  /* EEUU */
+  'miami':'Florida','new york':'Nueva York','nueva york':'Nueva York',
+  'los angeles':'California','chicago':'Illinois','houston':'Texas',
+  /* España */
+  'madrid':'Comunidad de Madrid','barcelona':'Cataluña','sevilla':'Andalucía',
+  'valencia':'Comunitat Valenciana','bilbao':'País Vasco','zaragoza':'Aragón'
+};
+
+function onCambiaPais() {
   var pais = document.getElementById('pais_origen').value;
-  var deptoBlock    = document.getElementById('depto-block');
-  var otroPaisBlock = document.getElementById('otro-pais-block');
-  if (deptoBlock)    deptoBlock.style.display    = (pais === 'Colombia') ? 'block' : 'none';
-  if (otroPaisBlock) otroPaisBlock.style.display = (pais === 'Otro')     ? 'block' : 'none';
+  document.getElementById('otro-pais-block').style.display = (pais === 'Otro') ? 'block' : 'none';
+  document.getElementById('ciudad-block').style.display    = pais ? 'block' : 'none';
+  // Limpiar al cambiar
+  document.getElementById('ciudad_origen').value = '';
+  document.getElementById('region-detectada').style.display = 'none';
+  document.getElementById('region-detectada').textContent = '';
+  delete data['region_origen'];
+  delete data['ciudad_origen'];
 }
 
-function toggleCiudadOtra() {
-  var ciudad = document.getElementById('depto_origen').value;
-  var otraBlock = document.getElementById('ciudad-otra-block');
-  if (otraBlock) otraBlock.style.display = (ciudad === 'Otra ciudad') ? 'block' : 'none';
+function autoDetectarRegion() {
+  var ciudad = document.getElementById('ciudad_origen').value.trim();
+  var pais   = document.getElementById('pais_origen').value;
+  var clave  = ciudad.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') /* quita tildes para buscar */
+    .trim();
+  /* también buscar con tildes originales */
+  var claveTilde = ciudad.toLowerCase().trim();
+
+  var region = REGION_MAP[clave] || REGION_MAP[claveTilde] || '';
+
+  var elRegion = document.getElementById('region-detectada');
+  if (region) {
+    var etiqueta = (pais === 'Colombia') ? '📍 Departamento' : '📍 Estado / Provincia';
+    elRegion.innerHTML = etiqueta + ': <strong>' + region + '</strong>';
+    elRegion.style.display = 'block';
+    data['region_origen'] = region;
+  } else {
+    elRegion.style.display = 'none';
+    delete data['region_origen'];
+  }
+  data['ciudad_origen'] = ciudad;
 }
+
+/* ── Funciones antiguas (compatibilidad) ── */
+function toggleDepto() {}
+function toggleCiudadOtra() {}
 
 /* ── Guardar campos de texto ── */
 function guardarCamposLibres() {
   ['edad','empresa_nombre','otros_enterado','otro_pais_nombre','lugar_otro',
-   'genero_otro','etnico_otro','motivo_otro','transp_otro','adqui_otro','ciudad_otra',
+   'genero_otro','etnico_otro','motivo_otro','transp_otro','adqui_otro',
+   'ciudad_origen',
    'g_transporte','g_alimento','g_recreacion','g_bienes','g_salud','g_hospedaje','comentario'
   ].forEach(function(id) {
     var el = document.getElementById(id);
     if (el && el.value && el.value.trim()) data[id] = el.value.trim();
   });
-  var pais  = document.getElementById('pais_origen');
-  var depto = document.getElementById('depto_origen');
-  if (pais  && pais.value)  data['pais_origen']  = pais.value;
-  if (depto && depto.value) data['depto_origen'] = depto.value;
+  var pais = document.getElementById('pais_origen');
+  if (pais && pais.value) {
+    data['pais_origen'] = (pais.value === 'Otro')
+      ? (document.getElementById('otro_pais_nombre').value.trim() || 'Otro')
+      : pais.value;
+  }
+  /* region_origen ya se guarda en tiempo real desde autoDetectarRegion */
 }
 
 /* ── Separador de miles ── */
@@ -603,8 +682,7 @@ function go(n) {
       var paisVal = document.getElementById('pais_origen').value;
       if (!paisVal) { mostrarAviso(aviso); return; }
       if (paisVal === 'Otro' && campoOtroVacio('otro_pais_nombre')) { mostrarAviso('Escribe el nombre del país.'); return; }
-      if (paisVal === 'Colombia' && !document.getElementById('depto_origen').value.trim()) { mostrarAviso('Escribe tu ciudad de origen.'); return; }
-      if (paisVal === 'Colombia' && document.getElementById('depto_origen').value === 'Otra ciudad' && !document.getElementById('ciudad_otra').value.trim()) { mostrarAviso('Escribe el nombre de tu ciudad.'); return; }
+      if (!document.getElementById('ciudad_origen').value.trim()) { mostrarAviso('Escribe tu ciudad de origen.'); return; }
     }
     if (paso === 5) {
       if (!data['enterado']) { mostrarAviso(aviso); return; }
