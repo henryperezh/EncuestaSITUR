@@ -163,16 +163,39 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
         <input class="inp" id="otro_pais_nombre" type="text" placeholder="¿Cuál país?" />
       </div>
 
-      <!-- Ciudad (siempre visible tras elegir país) -->
-      <div id="ciudad-block" style="display:none;">
-        <input class="inp" id="ciudad_origen" type="text"
-               placeholder="Ciudad de origen (ej: Cali, Bogotá...)"
-               oninput="autoDetectarRegion()" />
-        <!-- Departamento/estado detectado automáticamente -->
-        <div id="region-detectada" style="display:none;
-             background:#E1F5EE;border-radius:8px;padding:8px 12px;
-             font-size:14px;color:#085041;margin-top:-8px;margin-bottom:12px;">
+      <!-- Colombia: selects de departamento y ciudad -->
+      <div id="colombia-block" style="display:none;">
+        <select class="inp" id="depto_col" onchange="onCambiaDepto()">
+          <option value="">— Departamento —</option>
+          <option>Amazonas</option><option>Antioquia</option><option>Arauca</option>
+          <option>Atlántico</option><option>Bolívar</option><option>Boyacá</option>
+          <option>Caldas</option><option>Caquetá</option><option>Casanare</option>
+          <option>Cauca</option><option>Cesar</option><option>Chocó</option>
+          <option>Córdoba</option><option>Cundinamarca</option><option>Guainía</option>
+          <option>Guaviare</option><option>Huila</option><option>La Guajira</option>
+          <option>Magdalena</option><option>Meta</option><option>Nariño</option>
+          <option>Norte de Santander</option><option>Putumayo</option><option>Quindío</option>
+          <option>Risaralda</option><option>San Andrés y Providencia</option>
+          <option>Santander</option><option>Sucre</option><option>Tolima</option>
+          <option>Valle del Cauca</option><option>Vaupés</option><option>Vichada</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <input class="inp" id="depto_col_otro" type="text" placeholder="¿Cuál departamento?" style="display:none;" />
+
+        <div id="ciudad-col-block" style="display:none;">
+          <select class="inp" id="ciudad_col" onchange="onCambiaCiudadCol()">
+            <option value="">— Ciudad / Municipio —</option>
+          </select>
+          <input class="inp" id="ciudad_col_otro" type="text" placeholder="¿Cuál ciudad?" style="display:none;" />
         </div>
+      </div>
+
+      <!-- Otros países: texto libre -->
+      <div id="extranjero-block" style="display:none;">
+        <input class="inp" id="region_origen_ext" type="text"
+               placeholder="Estado / Provincia / Departamento" />
+        <input class="inp" id="ciudad_origen_ext" type="text"
+               placeholder="Ciudad de origen" />
       </div>
 
       <div class="nav"><button class="btn" onclick="go(3)">← Atrás</button><button class="btn next" onclick="go(5)">Siguiente →</button></div>
@@ -352,11 +375,9 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
       <div class="step-icon">🗺️</div>
       <div class="step-q">¿La oferta turística está bien promocionada y señalizada?</div>
       <div class="opts" id="promocion">
-        <span class="opt" data-v="Totalmente de acuerdo">👍👍 Totalmente de acuerdo</span>
         <span class="opt" data-v="De acuerdo">👍 De acuerdo</span>
         <span class="opt" data-v="Neutral">🤷 Neutral / No sabe</span>
         <span class="opt" data-v="En desacuerdo">👎 En desacuerdo</span>
-        <span class="opt" data-v="Totalmente en desacuerdo">👎👎 Totalmente en desacuerdo</span>
       </div>
       <div class="nav"><button class="btn" onclick="go(11)">← Atrás</button><button class="btn next" onclick="go(13)">Siguiente →</button></div>
     </div>
@@ -373,39 +394,29 @@ select.inp { appearance: none; background-image: url("data:image/svg+xml,%3Csvg 
       <div class="nav"><button class="btn" onclick="go(12)">← Atrás</button><button class="btn next" onclick="go(14)">Siguiente →</button></div>
     </div>
 
-    <!-- PASO 14: Comentario final -->
+    <!-- PASO 14: Correo y comentario final -->
     <div class="step" id="s14">
       <div class="step-icon">💬</div>
-      <div class="step-q">¿Tienes algún comentario sobre tu visita?</div>
+      <div class="step-q">¿Deseas recibir información sobre Vijes?</div>
+      <div class="opts" id="quiere_correo">
+        <span class="opt" data-v="Si">👍 Sí</span>
+        <span class="opt" data-v="No">👎 No</span>
+      </div>
+      <div id="correo-input-block" style="display:none;">
+        <input class="inp" id="correo_info" type="email" placeholder="Correo electrónico (ej: nombre@correo.com)" />
+      </div>
+      <div class="step-q" style="font-size:16px;margin-top:12px;">¿Tienes algún comentario sobre tu visita?</div>
       <div class="step-sub">Opcional — cuéntanos lo que quieras</div>
       <textarea id="comentario" rows="4" placeholder="Cuéntanos qué te gustó o qué podemos mejorar..."></textarea>
       <div class="nav"><button class="btn" onclick="go(13)">← Atrás</button><button class="btn next" onclick="go(15)">Enviar encuesta ✓</button></div>
     </div>
 
-    <!-- PASO 15: Gracias + C25: ¿Desea información? -->
+    <!-- PASO 15: Gracias -->
     <div class="step" id="s15">
       <div class="fin">
         <div class="fin-icon">🎊</div>
         <h2>¡Muchas gracias, viajero!</h2>
-        <p>Tu opinión ayuda a mejorar Vijes como destino turístico.<br>¡Esperamos verte pronto de nuevo!</p>
-        <!-- C25: pregunta de información -->
-        <div id="info-pregunta">
-          <p style="font-weight:600;font-size:14px;color:#111;margin-bottom:4px;">¿Deseas recibir información sobre Vijes?</p>
-          <div class="info-opts">
-            <button class="info-btn si" onclick="mostrarCorreoFin()">Sí</button>
-            <button class="info-btn no" onclick="cerrarSinCorreo()">No</button>
-          </div>
-        </div>
-
-        <div id="correo-fin-block">
-          <input class="inp" id="correo_fin" type="email" placeholder="Correo electrónico" style="margin-top:8px;" />
-          <button class="btn next" style="width:100%;margin-top:4px;" onclick="guardarCorreoFin()">Confirmar ✓</button>
-        </div>
-
-        <div id="cierre-block" style="display:none;">
-          <p style="font-size:13px;color:#555;margin-top:8px;">¡Hasta pronto! 👋</p>
-        </div>
-
+        <p>Tu opinión ayuda a mejorar Vijes como destino turístico.<br>¡Esperamos verte pronto de nuevo! 👋</p>
         <div class="footer-note">Datos registrados para el Sistema de Indicadores Turísticos SITUR · Gobernación del Valle del Cauca</div>
       </div>
     </div>
@@ -440,7 +451,7 @@ document.addEventListener('DOMContentLoaded', function() {
   /* ── Single-select general ── */
   var singleSelects = '#lugar .opt,#genero .opt,#etnico .opt,#poblacional .opt,' +
     '#enterado .opt,#motivo .opt,#transp .opt,#noches .opt,' +
-    '#alojamiento .opt,#adquisicion .opt,#promocion .opt,#volver .opt';
+    '#alojamiento .opt,#adquisicion .opt,#promocion .opt,#volver .opt,#quiere_correo .opt';
 
   document.querySelectorAll(singleSelects).forEach(function(el) {
     el.addEventListener('click', function() {
@@ -473,6 +484,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (inp2) inp2.style.display = 'block';
       }
 
+      /* quiere_correo: mostrar/ocultar campo email */
+      if (parent.id === 'quiere_correo') {
+        var correoBlock = document.getElementById('correo-input-block');
+        if (correoBlock) correoBlock.style.display = (this.dataset.v === 'Si') ? 'block' : 'none';
+        if (this.dataset.v === 'No') {
+          var elC = document.getElementById('correo_info');
+          if (elC) elC.value = '';
+        }
+      }
+
       /* noches: mostrar/ocultar alojamiento y hospedaje */
       if (parent.id === 'noches') {
         var mostrar = (this.dataset.v !== '0 noches');
@@ -497,118 +518,118 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }); /* fin DOMContentLoaded */
 
-/* ── Mapa ciudad → departamento/estado ── */
-var REGION_MAP = {
-  /* Colombia */
-  'cali':'Valle del Cauca','palmira':'Valle del Cauca','buenaventura':'Valle del Cauca',
-  'tulua':'Valle del Cauca','tuluá':'Valle del Cauca','buga':'Valle del Cauca',
-  'cartago':'Valle del Cauca','yumbo':'Valle del Cauca','jamundi':'Valle del Cauca',
-  'jamundí':'Valle del Cauca','vijes':'Valle del Cauca','florida':'Valle del Cauca',
-  'pradera':'Valle del Cauca','candelaria':'Valle del Cauca','zarzal':'Valle del Cauca',
-  'bogota':'Cundinamarca','bogotá':'Cundinamarca','soacha':'Cundinamarca',
-  'zipaquira':'Cundinamarca','zipaquirá':'Cundinamarca','facatativa':'Cundinamarca',
-  'facatativá':'Cundinamarca','fusagasuga':'Cundinamarca','fusagasugá':'Cundinamarca',
-  'medellin':'Antioquia','medellín':'Antioquia','bello':'Antioquia','itagui':'Antioquia',
-  'itagüí':'Antioquia','envigado':'Antioquia','rionegro':'Antioquia','turbo':'Antioquia',
-  'apartado':'Antioquia','apartadó':'Antioquia',
-  'barranquilla':'Atlántico','soledad':'Atlántico','malambo':'Atlántico',
-  'cartagena':'Bolívar','magangue':'Bolívar','magangué':'Bolívar',
-  'bucaramanga':'Santander','floridablanca':'Santander','giron':'Santander',
-  'girón':'Santander','piedecuesta':'Santander',
-  'cucuta':'Norte de Santander','cúcuta':'Norte de Santander','ocana':'Norte de Santander',
-  'pereira':'Risaralda','dosquebradas':'Risaralda',
-  'manizales':'Caldas','la dorada':'Caldas',
-  'armenia':'Quindío','calarca':'Quindío','calarcá':'Quindío',
-  'ibague':'Tolima','ibagué':'Tolima','espinal':'Tolima','melgar':'Tolima',
-  'neiva':'Huila','pitalito':'Huila','garzon':'Huila','garzón':'Huila',
-  'pasto':'Nariño','tumaco':'Nariño','ipiales':'Nariño',
-  'popayan':'Cauca','popayán':'Cauca',
-  'valledupar':'Cesar','santa marta':'Magdalena','riohacha':'La Guajira',
-  'monteria':'Córdoba','montería':'Córdoba',
-  'villavicencio':'Meta','acacias':'Meta','acacías':'Meta',
-  'tunja':'Boyacá','duitama':'Boyacá','sogamoso':'Boyacá',
-  'florencia':'Caquetá','yopal':'Casanare','quibdo':'Chocó','quibdó':'Chocó',
-  'sincelejo':'Sucre','leticia':'Amazonas','inirida':'Guainía','inírida':'Guainía',
-  'mitu':'Vaupés','mitú':'Vaupés','san andres':'San Andrés y Providencia',
-  'san andrés':'San Andrés y Providencia',
-  /* Venezuela */
-  'caracas':'Distrito Capital','maracaibo':'Zulia','valencia':'Carabobo',
-  'barquisimeto':'Lara','maracay':'Aragua','ciudad guayana':'Bolívar',
-  'barcelona':'Anzoátegui','maturin':'Monagas','maturín':'Monagas',
-  'san cristobal':'Táchira','san cristóbal':'Táchira',
-  /* Ecuador */
-  'quito':'Pichincha','guayaquil':'Guayas','cuenca':'Azuay',
-  'ambato':'Tungurahua','machala':'El Oro','esmeraldas':'Esmeraldas',
-  /* Perú */
-  'lima':'Lima','arequipa':'Arequipa','trujillo':'La Libertad',
-  'chiclayo':'Lambayeque','cusco':'Cusco','cuzco':'Cusco',
-  /* México */
-  'ciudad de mexico':'Ciudad de México','cdmx':'Ciudad de México',
-  'guadalajara':'Jalisco','monterrey':'Nuevo León','puebla':'Puebla',
-  'cancun':'Quintana Roo','cancún':'Quintana Roo',
-  /* Argentina */
-  'buenos aires':'Buenos Aires','cordoba':'Córdoba','rosario':'Santa Fe',
-  'mendoza':'Mendoza','tucuman':'Tucumán','tucumán':'Tucumán',
-  /* Brasil */
-  'sao paulo':'São Paulo','são paulo':'São Paulo','rio de janeiro':'Rio de Janeiro',
-  'brasilia':'Distrito Federal','brasília':'Distrito Federal','salvador':'Bahía',
-  /* EEUU */
-  'miami':'Florida','new york':'Nueva York','nueva york':'Nueva York',
-  'los angeles':'California','chicago':'Illinois','houston':'Texas',
-  /* España */
-  'madrid':'Comunidad de Madrid','barcelona':'Cataluña','sevilla':'Andalucía',
-  'valencia':'Comunitat Valenciana','bilbao':'País Vasco','zaragoza':'Aragón'
-};
 
 function onCambiaPais() {
   var pais = document.getElementById('pais_origen').value;
-  document.getElementById('otro-pais-block').style.display = (pais === 'Otro') ? 'block' : 'none';
-  document.getElementById('ciudad-block').style.display    = pais ? 'block' : 'none';
+  document.getElementById('otro-pais-block').style.display   = (pais === 'Otro') ? 'block' : 'none';
+  document.getElementById('colombia-block').style.display    = (pais === 'Colombia') ? 'block' : 'none';
+  document.getElementById('extranjero-block').style.display  = (pais && pais !== 'Colombia') ? 'block' : 'none';
   // Limpiar al cambiar
-  document.getElementById('ciudad_origen').value = '';
-  document.getElementById('region-detectada').style.display = 'none';
-  document.getElementById('region-detectada').textContent = '';
+  document.getElementById('depto_col').value = '';
+  document.getElementById('depto_col_otro').value = '';
+  document.getElementById('depto_col_otro').style.display = 'none';
+  document.getElementById('ciudad-col-block').style.display = 'none';
+  document.getElementById('ciudad_col_otro').value = '';
+  document.getElementById('ciudad_col_otro').style.display = 'none';
+  document.getElementById('region_origen_ext').value = '';
+  document.getElementById('ciudad_origen_ext').value = '';
   delete data['region_origen'];
   delete data['ciudad_origen'];
 }
 
-function autoDetectarRegion() {
-  var ciudad = document.getElementById('ciudad_origen').value.trim();
-  var pais   = document.getElementById('pais_origen').value;
-  var clave  = ciudad.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') /* quita tildes para buscar */
-    .trim();
-  /* también buscar con tildes originales */
-  var claveTilde = ciudad.toLowerCase().trim();
+var CIUDADES_POR_DEPTO = {
+  'Valle del Cauca': ['Cali','Palmira','Buenaventura','Tuluá','Buga','Cartago','Yumbo',
+    'Jamundí','Vijes','Florida','Pradera','Candelaria','Zarzal','Roldanillo',
+    'La Unión','Caicedonia','Sevilla','Dagua','Buenaventura','Calima-El Darién','Otra'],
+  'Antioquia': ['Medellín','Bello','Itagüí','Envigado','Apartadó','Turbo',
+    'Rionegro','Caucasia','Quibdó','Otra'],
+  'Cundinamarca': ['Bogotá','Soacha','Zipaquirá','Facatativá','Fusagasugá',
+    'Chía','Mosquera','Madrid','Otra'],
+  'Atlántico': ['Barranquilla','Soledad','Malambo','Sabanalarga','Otra'],
+  'Bolívar': ['Cartagena','Magangué','Mompós','Otra'],
+  'Boyacá': ['Tunja','Duitama','Sogamoso','Chiquinquirá','Otra'],
+  'Caldas': ['Manizales','La Dorada','Chinchiná','Otra'],
+  'Caquetá': ['Florencia','Otra'],
+  'Casanare': ['Yopal','Otra'],
+  'Cauca': ['Popayán','Santander de Quilichao','Otra'],
+  'Cesar': ['Valledupar','Aguachica','Otra'],
+  'Chocó': ['Quibdó','Otra'],
+  'Córdoba': ['Montería','Lorica','Otra'],
+  'Huila': ['Neiva','Pitalito','Garzón','Otra'],
+  'La Guajira': ['Riohacha','Maicao','Otra'],
+  'Magdalena': ['Santa Marta','Ciénaga','Otra'],
+  'Meta': ['Villavicencio','Acacías','Otra'],
+  'Nariño': ['Pasto','Tumaco','Ipiales','Otra'],
+  'Norte de Santander': ['Cúcuta','Ocaña','Pamplona','Otra'],
+  'Quindío': ['Armenia','Calarcá','Montenegro','Otra'],
+  'Risaralda': ['Pereira','Dosquebradas','Santa Rosa de Cabal','Otra'],
+  'Santander': ['Bucaramanga','Floridablanca','Girón','Piedecuesta','Otra'],
+  'Sucre': ['Sincelejo','Corozal','Otra'],
+  'Tolima': ['Ibagué','Espinal','Melgar','Honda','Otra'],
+  'San Andrés y Providencia': ['San Andrés','Otra'],
+  'Amazonas': ['Leticia','Otra'],
+  'Arauca': ['Arauca','Otra'],
+  'Guainía': ['Inírida','Otra'],
+  'Guaviare': ['San José del Guaviare','Otra'],
+  'Putumayo': ['Mocoa','Otra'],
+  'Vaupés': ['Mitú','Otra'],
+  'Vichada': ['Puerto Carreño','Otra']
+};
 
-  var region = REGION_MAP[clave] || REGION_MAP[claveTilde] || '';
+function onCambiaDepto() {
+  var depto = document.getElementById('depto_col').value;
+  var otroInp = document.getElementById('depto_col_otro');
+  var ciudadBlock = document.getElementById('ciudad-col-block');
+  var ciudadSel = document.getElementById('ciudad_col');
+  var ciudadOtro = document.getElementById('ciudad_col_otro');
 
-  var elRegion = document.getElementById('region-detectada');
-  if (region) {
-    var etiqueta = (pais === 'Colombia') ? '📍 Departamento' : '📍 Estado / Provincia';
-    elRegion.innerHTML = etiqueta + ': <strong>' + region + '</strong>';
-    elRegion.style.display = 'block';
-    data['region_origen'] = region;
+  otroInp.style.display = (depto === 'Otro') ? 'block' : 'none';
+  if (depto === 'Otro') { otroInp.value = ''; ciudadBlock.style.display = 'none'; return; }
+
+  ciudadOtro.style.display = 'none';
+  ciudadOtro.value = '';
+  ciudadSel.innerHTML = '<option value="">— Ciudad / Municipio —</option>';
+
+  if (depto && CIUDADES_POR_DEPTO[depto]) {
+    CIUDADES_POR_DEPTO[depto].forEach(function(c) {
+      var opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      ciudadSel.appendChild(opt);
+    });
+    ciudadBlock.style.display = 'block';
   } else {
-    elRegion.style.display = 'none';
-    delete data['region_origen'];
+    ciudadBlock.style.display = 'none';
   }
-  data['ciudad_origen'] = ciudad;
+  delete data['ciudad_origen'];
 }
 
-/* ── Funciones antiguas (compatibilidad) ── */
-function toggleDepto() {}
-function toggleCiudadOtra() {}
+function onCambiaCiudadCol() {
+  var ciudad = document.getElementById('ciudad_col').value;
+  var otroInp = document.getElementById('ciudad_col_otro');
+  otroInp.style.display = (ciudad === 'Otra') ? 'block' : 'none';
+  if (ciudad === 'Otra') otroInp.value = '';
+}
+
 
 /* ── Guardar campos de texto ── */
 function guardarCamposLibres() {
   ['edad','empresa_nombre','otros_enterado','otro_pais_nombre','lugar_otro',
    'genero_otro','etnico_otro','motivo_otro','transp_otro','adqui_otro',
-   'ciudad_origen',
-   'g_transporte','g_alimento','g_recreacion','g_bienes','g_salud','g_hospedaje','comentario'
+   'depto_col_otro','ciudad_col_otro','region_origen_ext','ciudad_origen_ext',
+   'g_transporte','g_alimento','g_recreacion','g_bienes','g_salud','g_hospedaje','comentario','correo_info'
   ].forEach(function(id) {
     var el = document.getElementById(id);
     if (el && el.value && el.value.trim()) data[id] = el.value.trim();
+  });
+
+  /* Garantizar que los campos "otro" siempre tengan un valor fijo
+     para que las columnas del Excel no se desplacen */
+  var camposOtro = [
+    'lugar_otro','genero_otro','etnico_otro','motivo_otro',
+    'transp_otro','adqui_otro','otros_enterado','empresa_nombre','otro_pais_nombre'
+  ];
+  camposOtro.forEach(function(id) {
+    if (!data[id]) data[id] = '-';
   });
   var pais = document.getElementById('pais_origen');
   if (pais && pais.value) {
@@ -616,7 +637,25 @@ function guardarCamposLibres() {
       ? (document.getElementById('otro_pais_nombre').value.trim() || 'Otro')
       : pais.value;
   }
-  /* region_origen ya se guarda en tiempo real desde autoDetectarRegion */
+  /* region_origen y ciudad_origen según país */
+  var pais = document.getElementById('pais_origen') ? document.getElementById('pais_origen').value : '';
+  if (pais === 'Colombia') {
+    var depto = document.getElementById('depto_col').value;
+    if (depto === 'Otro') {
+      data['region_origen'] = document.getElementById('depto_col_otro').value.trim() || '-';
+    } else {
+      data['region_origen'] = depto || '-';
+    }
+    var ciu = document.getElementById('ciudad_col').value;
+    if (ciu === 'Otra') {
+      data['ciudad_origen'] = document.getElementById('ciudad_col_otro').value.trim() || '-';
+    } else {
+      data['ciudad_origen'] = ciu || '-';
+    }
+  } else if (pais) {
+    data['region_origen'] = document.getElementById('region_origen_ext').value.trim() || '-';
+    data['ciudad_origen'] = document.getElementById('ciudad_origen_ext').value.trim() || '-';
+  }
 }
 
 /* ── Separador de miles ── */
@@ -682,7 +721,20 @@ function go(n) {
       var paisVal = document.getElementById('pais_origen').value;
       if (!paisVal) { mostrarAviso(aviso); return; }
       if (paisVal === 'Otro' && campoOtroVacio('otro_pais_nombre')) { mostrarAviso('Escribe el nombre del país.'); return; }
-      if (!document.getElementById('ciudad_origen').value.trim()) { mostrarAviso('Escribe tu ciudad de origen.'); return; }
+      var paisV = document.getElementById('pais_origen').value;
+      if (paisV === 'Colombia') {
+        var deptoV = document.getElementById('depto_col').value;
+        if (!deptoV) { mostrarAviso('Selecciona tu departamento.'); return; }
+        if (deptoV === 'Otro' && !document.getElementById('depto_col_otro').value.trim()) { mostrarAviso('Escribe tu departamento.'); return; }
+        if (deptoV !== 'Otro') {
+          var ciudadV = document.getElementById('ciudad_col').value;
+          if (!ciudadV) { mostrarAviso('Selecciona tu ciudad.'); return; }
+          if (ciudadV === 'Otra' && !document.getElementById('ciudad_col_otro').value.trim()) { mostrarAviso('Escribe tu ciudad.'); return; }
+        }
+      } else {
+        if (!document.getElementById('region_origen_ext').value.trim()) { mostrarAviso('Escribe tu departamento o estado.'); return; }
+        if (!document.getElementById('ciudad_origen_ext').value.trim()) { mostrarAviso('Escribe tu ciudad de origen.'); return; }
+      }
     }
     if (paso === 5) {
       if (!data['enterado']) { mostrarAviso(aviso); return; }
@@ -720,6 +772,15 @@ function go(n) {
     if (paso === 13) {
       if (!data['volver']) { mostrarAviso(aviso); return; }
     }
+    if (paso === 14) {
+      if (!data['quiere_correo']) { mostrarAviso('Indica si deseas recibir información.'); return; }
+      if (data['quiere_correo'] === 'Si') {
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        var correoVal = document.getElementById('correo_info').value.trim();
+        if (!correoVal) { mostrarAviso('Escribe tu correo electrónico.'); return; }
+        if (!emailRegex.test(correoVal)) { mostrarAviso('Escribe un correo válido (ej: nombre@correo.com).'); return; }
+      }
+    }
   }
 
   document.querySelectorAll('.step').forEach(function(s) { s.classList.remove('active'); });
@@ -748,44 +809,7 @@ function mostrarResumenYEnviar() {
   .catch(function(err) { console.error('Error fetch:', err); });
 }
 
-function mostrarCorreoFin() {
-  document.getElementById('info-pregunta').style.display = 'none';
-  document.getElementById('correo-fin-block').style.display = 'block';
-}
-function cerrarSinCorreo() {
-  document.getElementById('info-pregunta').style.display = 'none';
-  document.getElementById('cierre-block').style.display = 'block';
-}
-function guardarCorreoFin() {
-  var correo = document.getElementById('correo_fin').value.trim();
-  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  var avEl = document.getElementById('aviso-correo-fin');
-  if (!avEl) {
-    avEl = document.createElement('div');
-    avEl.id = 'aviso-correo-fin';
-    avEl.style.cssText = 'background:#fff0f0;border:1.5px solid #e44;border-radius:10px;padding:8px 12px;font-size:13px;color:#c00;margin-top:8px;text-align:center;';
-    document.getElementById('correo-fin-block').appendChild(avEl);
-  }
-  if (!correo) {
-    avEl.textContent = '⚠️ Por favor escribe tu correo electrónico.';
-    avEl.style.display = 'block';
-    return;
-  }
-  if (!emailRegex.test(correo)) {
-    avEl.textContent = '⚠️ Escribe un correo válido (ej: nombre@correo.com).';
-    avEl.style.display = 'block';
-    return;
-  }
-  avEl.style.display = 'none';
-  data['correo_info'] = correo;
-  fetch(SHEET_URL, {
-    method: 'POST', mode: 'no-cors',
-    body: JSON.stringify({ correo_info: correo, lugar: data['lugar'] }),
-    headers: { 'Content-Type': 'application/json' }
-  }).catch(function() {});
-  document.getElementById('correo-fin-block').style.display = 'none';
-  document.getElementById('cierre-block').style.display = 'block';
-}
+
 </script>
 </body>
 </html>
