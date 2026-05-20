@@ -802,7 +802,7 @@ function mostrarResumenYEnviar() {
   data['fecha'] = new Date().toISOString().slice(0, 10);
   console.log('Enviando datos:', JSON.stringify(data)); 
   fetch(SHEET_URL, {
-    method: 'POST', mode: 'no-cors',
+    method: 'POST',
     body: JSON.stringify(data),
     headers: { 'Content-Type': 'text/plain' }
   })
