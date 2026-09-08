@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return function() {
           r.querySelectorAll('.snum').forEach(function(s) { s.classList.remove('sel'); });
           b.classList.add('sel');
-          data[r.dataset.k] = b.dataset.i + '/10';
+          data[r.dataset.k] = b.dataset.i;
         };
       })(btn, row));
       row.appendChild(btn);
